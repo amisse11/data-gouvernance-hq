@@ -1,0 +1,17 @@
+{
+	"name": "ds_sql_hq_secteur",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_azure_sql",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "hq_secteur"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

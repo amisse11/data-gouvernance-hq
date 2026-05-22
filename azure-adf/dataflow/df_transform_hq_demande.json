@@ -1,0 +1,125 @@
+{
+	"name": "df_transform_hq_demande",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_hq_demande_landing",
+						"type": "DatasetReference"
+					},
+					"name": "sourcedemande"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_sql_hq_demande",
+						"type": "DatasetReference"
+					},
+					"name": "sinkdemandesql"
+				}
+			],
+			"transformations": [
+				{
+					"name": "renamedemande"
+				},
+				{
+					"name": "castdemande"
+				},
+				{
+					"name": "windowShowDuplicates"
+				},
+				{
+					"name": "filterDuplicates"
+				},
+				{
+					"name": "windowNext"
+				},
+				{
+					"name": "derivedinterpolation"
+				},
+				{
+					"name": "windowIndex"
+				},
+				{
+					"name": "windowPrevious"
+				},
+				{
+					"name": "sortAsc"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          date as string,",
+				"          {demande (MW)} as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> sourcedemande",
+				"sourcedemande select(mapColumn(",
+				"          date,",
+				"          demande_mw = {demande (MW)}",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> renamedemande",
+				"renamedemande derive(date = toTimestamp(\r",
+				"    date,\r",
+				"    \"yyyy-MM-dd'T'HH:mm:ssXXX\",\r",
+				"    'UTC',\r",
+				"    'en'\r",
+				"),",
+				"          demande_mw = toDouble(demande_mw)) ~> castdemande",
+				"castdemande window(over(date),",
+				"     asc(date, true),",
+				"     row_num = rowNumber()) ~> windowShowDuplicates",
+				"windowShowDuplicates filter(row_num==1) ~> filterDuplicates",
+				"windowPrevious window(desc(date, true),",
+				"     next_idx = last(iif(!isNull(demande_mw), idx, toInteger(null())), true()),",
+				"          next_value = last(iif(!isNull(demande_mw), demande_mw, toDouble(null())), true())) ~> windowNext",
+				"sortAsc derive(interpolate_mw = iif(\r",
+				"    !isNull(demande_mw),\r",
+				"    demande_mw,\r",
+				"\r",
+				"    iif(\r",
+				"        isNull(prev_value) && !isNull(next_value),\r",
+				"        next_value,\r",
+				"\r",
+				"        iif(\r",
+				"            !isNull(prev_value) && isNull(next_value),\r",
+				"            prev_value,\r",
+				"\r",
+				"            iif(\r",
+				"                !isNull(prev_value) && !isNull(next_value) && next_idx != prev_idx,\r",
+				"                prev_value + ((idx - prev_idx) * (next_value - prev_value) / (next_idx - prev_idx)),\r",
+				"                prev_value\r",
+				"            )\r",
+				"        )\r",
+				"    )\r",
+				")) ~> derivedinterpolation",
+				"filterDuplicates window(asc(date, true),",
+				"     idx = rowNumber()) ~> windowIndex",
+				"windowIndex window(asc(date, true),",
+				"     prev_idx = last(iif(!isNull(demande_mw), idx, toInteger(null())), true()),",
+				"          prev_value = last(iif(!isNull(demande_mw), demande_mw, toDouble(null())), true())) ~> windowPrevious",
+				"windowNext sort(asc(date, true)) ~> sortAsc",
+				"derivedinterpolation sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     recreate:true,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          date,",
+				"          demande_mw = interpolate_mw",
+				"     )) ~> sinkdemandesql"
+			]
+		}
+	}
+}

@@ -1,0 +1,15 @@
+{
+	"name": "adf-dgq-hq",
+	"properties": {
+		"trustModeClaimForMi": {
+			"value": "Enabled",
+			"editable": true
+		}
+	},
+	"location": "canadacentral",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "a1eb61ed-fd55-42c8-852e-9b8757f5b02f",
+		"tenantId": "12865647-a544-42ef-8c89-f771c2fad0d3"
+	}
+}

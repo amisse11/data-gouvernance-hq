@@ -1,0 +1,74 @@
+{
+	"name": "df_transform_hq_secteur",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_hq_secteur_landing",
+						"type": "DatasetReference"
+					},
+					"name": "sourcesecteur"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_sql_hq_secteur",
+						"type": "DatasetReference"
+					},
+					"name": "sinksecteursql"
+				}
+			],
+			"transformations": [
+				{
+					"name": "renamesecteur"
+				},
+				{
+					"name": "castsecteur"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          REGION_ADM_QC_TXT as string,",
+				"          ANNEE_MOIS as string,",
+				"          SECTEUR as string,",
+				"          {Total (kWh)} as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> sourcesecteur",
+				"sourcesecteur select(mapColumn(",
+				"          region = REGION_ADM_QC_TXT,",
+				"          date = ANNEE_MOIS,",
+				"          secteur = SECTEUR,",
+				"          total_kwh = {Total (kWh)}",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> renamesecteur",
+				"renamesecteur derive(date = toDate(date, 'yyyy-MM-dd'),",
+				"          total_kwh = toDouble(total_kwh),",
+				"          secteur = initCap(lower(secteur)),",
+				"          region = trim(region)) ~> castsecteur",
+				"castsecteur sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     recreate:true,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          region,",
+				"          date,",
+				"          secteur,",
+				"          total_kwh",
+				"     )) ~> sinksecteursql"
+			]
+		}
+	}
+}

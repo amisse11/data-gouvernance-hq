@@ -1,0 +1,42 @@
+{
+	"name": "ds_hq_secteur_raw",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_blob_storage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "hq_consommation_secteur_raw.csv",
+				"folderPath": "raw",
+				"container": "dgq-data"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "REGION_ADM_QC_TXT",
+				"type": "String"
+			},
+			{
+				"name": "ANNEE_MOIS",
+				"type": "String"
+			},
+			{
+				"name": "SECTEUR",
+				"type": "String"
+			},
+			{
+				"name": "Total (kWh)",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}
