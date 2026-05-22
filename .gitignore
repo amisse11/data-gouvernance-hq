@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.pyc
+
+# Jupyter
+.ipynb_checkpoints/
+
+# IDE
+.idea/
+.vscode/
+
+# Data
+data/raw/
+data/clean/
+
+# Logs / reports générés
+reports/*.csv
