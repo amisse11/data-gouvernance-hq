@@ -28,7 +28,7 @@ résultats réels. Les niveaux de sévérité (PASS, WARN, INFO, CRIT) sont appl
 - **Seuil de blocage :** taux de valeurs nulles > 1 % (438 lignes).
 - **Résultat :** 45 valeurs nulles détectées, soit 0.10 % - en dessous du seuil.
 - **Action appliquée :** interpolation linéaire (`interpolate(method='linear', limit_direction='both')`).
-- **Statut :** WARN → **PASS après correction** (0 null restant).
+- **Statut :** WARN puis **PASS après correction** (0 null restant).
 
 ### RQ-02 - Convertibilité de la colonne `date`
 
@@ -45,7 +45,7 @@ résultats réels. Les niveaux de sévérité (PASS, WARN, INFO, CRIT) sont appl
   dimanche de novembre, 2019–2022) et au 1er janvier 2023.
 - **Action appliquée :** `drop_duplicates(subset=['date'], keep='first')`.
 - **Lignes après correction :** 43 818.
-- **Statut :** WARN → **PASS après correction**.
+- **Statut :** WARN puis **PASS après correction**.
 
 ### RQ-04 - Valeurs extrêmes de `demande_mw`
 
@@ -53,7 +53,7 @@ résultats réels. Les niveaux de sévérité (PASS, WARN, INFO, CRIT) sont appl
 - **Seuil IQR supérieur calculé :** 37 005.60 MW.
 - **Résultat :** 94 valeurs dépassent ce seuil. Toutes sont situées en janvier–février 2022 et 2023 (vagues de grand
   froid au Québec).
-- **Seuil technique (valeurs impossibles) :** > 45 000 MW → 0 valeur détectée.
+- **Seuil technique (valeurs impossibles) :** > 45 000 MW - 0 valeur détectée.
 - **Action appliquée :** conservation de toutes les valeurs, documentation comme pics légitimes.
 - **Statut :** **INFO** (valeurs conservées, aucune suppression).
 
@@ -62,10 +62,10 @@ résultats réels. Les niveaux de sévérité (PASS, WARN, INFO, CRIT) sont appl
 - **Règle :** toute valeur de `secteur` doit appartenir à la liste de référence.
 - **Valeurs distinctes observées :** AGRICOLE, COMMERCIAL, INDUSTRIEL, INSTITUTIONNEL, RESIDENTIEL (toutes en majuscules
   dans le fichier source).
-- **Action appliquée :** normalisation via `str.lower().str.title()` → Agricole, Commercial, Industriel, Institutionnel,
+- **Action appliquée :** normalisation via `str.lower().str.title()` - Agricole, Commercial, Industriel, Institutionnel,
   Résidentiel.
 - **Distribution après normalisation :** 2 040 occurrences par secteur (parfaitement équilibrée).
-- **Statut :** INFO → **PASS après normalisation**.
+- **Statut :** INFO  **PASS après normalisation**.
 
 ### RQ-07 - Complétude et validité de `total_kwh`
 

@@ -41,7 +41,7 @@ BEGIN
     (
         'RQ-01', 'dbo.hq_demande', @total_rows, @nb_nulls,
         CASE WHEN @total_rows = 0 THEN 0 ELSE CAST(100.0 * @nb_nulls / @total_rows AS decimal(5,2)) END,
-        CASE WHEN @nb_nulls > 0 THEN 'WARN' ELSE 'PASS' END,
+        'WARN',
         CASE WHEN @nb_nulls > 0 THEN 'PASS après correction' ELSE 'PASS' END
     );
 
@@ -74,7 +74,7 @@ BEGIN
     (
         'RQ-02', 'dbo.hq_demande', @total_rows, @nb_dates_invalides,
         CASE WHEN @total_rows = 0 THEN 0 ELSE CAST(100.0 * @nb_dates_invalides / @total_rows AS decimal(5,2)) END,
-        CASE WHEN @nb_dates_invalides > 0 THEN 'CRIT' ELSE 'PASS' END,
+        'CRIT',
         CASE WHEN @nb_dates_invalides > 0 THEN 'FAIL' ELSE 'PASS' END
     );
 
@@ -111,7 +111,7 @@ BEGIN
     (
         'RQ-03', 'dbo.hq_demande', @total_rows, @nb_dup_rows,
         CASE WHEN @total_rows = 0 THEN 0 ELSE CAST(100.0 * @nb_dup_rows / @total_rows AS decimal(5,2)) END,
-        CASE WHEN @nb_dup_rows > 0 THEN 'WARN' ELSE 'PASS' END,
+        'WARN',
         CASE WHEN @nb_dup_rows > 0 THEN 'PASS après correction' ELSE 'PASS' END
     );
 
@@ -144,7 +144,7 @@ BEGIN
     (
         'RQ-04', 'dbo.hq_demande', @total_rows, @nb_outliers_iqr,
         CASE WHEN @total_rows = 0 THEN 0 ELSE CAST(100.0 * @nb_outliers_iqr / @total_rows AS decimal(5,2)) END,
-        CASE WHEN @nb_outliers_iqr > 0 THEN 'INFO' ELSE 'PASS' END,
+        'INFO',
         CASE WHEN @nb_outliers_iqr > 0 THEN 'INFO' ELSE 'PASS' END
     );
 
@@ -177,7 +177,7 @@ BEGIN
     (
         'RQ-04b', 'dbo.hq_demande', @total_rows, @nb_too_high,
         CASE WHEN @total_rows = 0 THEN 0 ELSE CAST(100.0 * @nb_too_high / @total_rows AS decimal(5,2)) END,
-        CASE WHEN @nb_too_high > 0 THEN 'CRIT' ELSE 'PASS' END,
+        'CRIT',
         CASE WHEN @nb_too_high > 0 THEN 'FAIL' ELSE 'PASS' END
     );
 END;

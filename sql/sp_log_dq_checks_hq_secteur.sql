@@ -41,7 +41,7 @@ BEGIN
     (
         'RQ-06', 'dbo.hq_secteur', @total_rows, @nb_secteur_non_conformes,
         CASE WHEN @total_rows = 0 THEN 0 ELSE CAST(100.0 * @nb_secteur_non_conformes / @total_rows AS decimal(5,2)) END,
-        CASE WHEN @nb_secteur_non_conformes > 0 THEN 'WARN' ELSE 'PASS' END,
+        'WARN',
         CASE WHEN @nb_secteur_non_conformes > 0 THEN 'PASS après normalisation' ELSE 'PASS' END
     );
 
@@ -74,7 +74,7 @@ BEGIN
     (
         'RQ-07', 'dbo.hq_secteur', @total_rows, @nb_total_kwh_bad,
         CASE WHEN @total_rows = 0 THEN 0 ELSE CAST(100.0 * @nb_total_kwh_bad / @total_rows AS decimal(5,2)) END,
-        CASE WHEN @nb_total_kwh_bad > 0 THEN 'CRIT' ELSE 'PASS' END,
+        'CRIT',
         CASE WHEN @nb_total_kwh_bad > 0 THEN 'FAIL' ELSE 'PASS' END
     );
 END;
